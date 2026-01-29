@@ -475,12 +475,12 @@ export default function IntegratedSalesManagement({
 
   return (
     <div className="space-y-6">
-      {/* Header with Tabs */}
-      <div className="flex items-center justify-between">
-        <div className="flex space-x-1">
+      {/* Header with Tabs - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <button
             onClick={() => setActiveTab('sales')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-colors text-sm whitespace-nowrap ${
               activeTab === 'sales'
                 ? 'bg-primary-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -490,7 +490,7 @@ export default function IntegratedSalesManagement({
           </button>
           <button
             onClick={() => setActiveTab('customers')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-colors text-sm whitespace-nowrap ml-2 ${
               activeTab === 'customers'
                 ? 'bg-primary-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -504,7 +504,7 @@ export default function IntegratedSalesManagement({
           {activeTab === 'sales' && (
             <button 
               onClick={() => setShowSaleForm(true)}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 text-sm px-3 py-2"
             >
               <Plus className="h-4 w-4" />
               <span>Add Sale</span>
@@ -513,7 +513,7 @@ export default function IntegratedSalesManagement({
           {activeTab === 'customers' && (
             <button 
               onClick={() => setShowCustomerForm(true)}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 text-sm px-3 py-2"
             >
               <Plus className="h-4 w-4" />
               <span>Add Customer</span>

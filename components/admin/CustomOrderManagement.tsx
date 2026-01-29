@@ -143,9 +143,101 @@ export default function CustomOrderManagement({ customOrders, onOrdersChange }: 
         type="orders"
       />
 
-      {/* Custom Orders List */}
+      {/* Custom Orders List - Mobile Responsive */}
       <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Mobile Card View (Hidden on Desktop) */}
+        <div className="block lg:hidden">
+          {filteredOrders.length === 0 ? (
+            <div className="px-6 py-12 text-center text-gray-500">
+              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium">No custom orders yet</p>
+              <p className="text-sm">Custom turbo orders will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-4 p-4">
+              {filteredOrders.map((order) => (
+                <div key={order.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex-1">
+                      <div className="font-medium text-gray-900">#{order.id.slice(-8)}</div>
+                      <div className="text-sm text-gray-500">{order.createdAt.toLocaleDateString()}</div>
+                    </div>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                      {getStatusIcon(order.status)}
+                      <span className="ml-1 capitalize">{order.status}</span>
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{order.customerName}</div>
+                      <div className="text-sm text-gray-500">{order.customerPhone}</div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{order.turboName}</div>
+                      <div className="text-sm text-gray-500">{order.compatibleVehicle}</div>
+                    </div>
+                    
+                    <div className="pt-2 border-t border-gray-100 flex flex-wrap gap-2">
+                      <button
+                        onClick={() => setSelectedOrder(order)}
+                        className="flex items-center space-x-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm"
+                      >
+                        <Eye className="h-3 w-3" />
+                        <span>View</span>
+                      </button>
+                      
+                      {order.status === 'pending' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'quoted')}
+                          disabled={updatingStatus === order.id}
+                          className="flex items-center space-x-1 px-3 py-1 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm disabled:opacity-50"
+                        >
+                          <MessageSquare className="h-3 w-3" />
+                          <span>Quote</span>
+                        </button>
+                      )}
+                      
+                      {order.status === 'quoted' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                          disabled={updatingStatus === order.id}
+                          className="flex items-center space-x-1 px-3 py-1 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-sm disabled:opacity-50"
+                        >
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Confirm</span>
+                        </button>
+                      )}
+                      
+                      {order.status === 'confirmed' && (
+                        <button
+                          onClick={() => updateOrderStatus(order.id, 'completed')}
+                          disabled={updatingStatus === order.id}
+                          className="flex items-center space-x-1 px-3 py-1 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm disabled:opacity-50"
+                        >
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Complete</span>
+                        </button>
+                      )}
+                      
+                      <button
+                        onClick={() => deleteCustomOrder(order.id, order.customerName)}
+                        className="flex items-center space-x-1 px-3 py-1 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 text-sm"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop Table View (Hidden on Mobile) */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -170,90 +262,100 @@ export default function CustomOrderManagement({ customOrders, onOrdersChange }: 
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
-                <tr key={order.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    #{order.id.slice(-8)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
-                      {order.customerName}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {order.customerPhone}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium text-gray-900">
-                      {order.turboName}
-                    </div>
-                    <div className="text-sm text-gray-500">
-                      {order.compatibleVehicle}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                      {getStatusIcon(order.status)}
-                      <span className="ml-1 capitalize">{order.status}</span>
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {order.createdAt.toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex space-x-2">
-                      <button
-                        onClick={() => setSelectedOrder(order)}
-                        className="text-primary-600 hover:text-primary-900"
-                        title="View Details"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      
-                      {order.status === 'pending' && (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'quoted')}
-                          disabled={updatingStatus === order.id}
-                          className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
-                          title="Mark as Quoted"
-                        >
-                          <MessageSquare className="h-4 w-4" />
-                        </button>
-                      )}
-                      
-                      {order.status === 'quoted' && (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'confirmed')}
-                          disabled={updatingStatus === order.id}
-                          className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
-                          title="Mark as Confirmed"
-                        >
-                          <CheckCircle className="h-4 w-4" />
-                        </button>
-                      )}
-                      
-                      {order.status === 'confirmed' && (
-                        <button
-                          onClick={() => updateOrderStatus(order.id, 'completed')}
-                          disabled={updatingStatus === order.id}
-                          className="text-green-600 hover:text-green-900 disabled:opacity-50"
-                          title="Mark as Completed"
-                        >
-                          <CheckCircle className="h-4 w-4" />
-                        </button>
-                      )}
-
-                      <button
-                        onClick={() => deleteCustomOrder(order.id, order.customerName)}
-                        className="text-red-600 hover:text-red-900"
-                        title="Delete Order"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+              {filteredOrders.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                    <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-medium">No custom orders yet</p>
+                    <p className="text-sm">Custom turbo orders will appear here</p>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                filteredOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      #{order.id.slice(-8)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {order.customerName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {order.customerPhone}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-gray-900">
+                        {order.turboName}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {order.compatibleVehicle}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                        {getStatusIcon(order.status)}
+                        <span className="ml-1 capitalize">{order.status}</span>
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {order.createdAt.toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="text-primary-600 hover:text-primary-900"
+                          title="View Details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        
+                        {order.status === 'pending' && (
+                          <button
+                            onClick={() => updateOrderStatus(order.id, 'quoted')}
+                            disabled={updatingStatus === order.id}
+                            className="text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                            title="Mark as Quoted"
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </button>
+                        )}
+                        
+                        {order.status === 'quoted' && (
+                          <button
+                            onClick={() => updateOrderStatus(order.id, 'confirmed')}
+                            disabled={updatingStatus === order.id}
+                            className="text-purple-600 hover:text-purple-900 disabled:opacity-50"
+                            title="Mark as Confirmed"
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </button>
+                        )}
+                        
+                        {order.status === 'confirmed' && (
+                          <button
+                            onClick={() => updateOrderStatus(order.id, 'completed')}
+                            disabled={updatingStatus === order.id}
+                            className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                            title="Mark as Completed"
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </button>
+                        )}
+
+                        <button
+                          onClick={() => deleteCustomOrder(order.id, order.customerName)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete Order"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

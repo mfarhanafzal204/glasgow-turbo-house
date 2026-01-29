@@ -530,13 +530,13 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      {/* Header - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Item Management</h2>
-          <p className="text-gray-600">Manage your complete item catalog</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Item Management</h2>
+          <p className="text-sm sm:text-base text-gray-600">Manage your complete item catalog</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={async () => {
               if (confirm('This will completely reset and recalculate all stock data from scratch. Continue?')) {
@@ -553,10 +553,10 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
                 }
               }
             }}
-            className="btn-secondary flex items-center space-x-2 bg-red-50 text-red-700 hover:bg-red-100"
+            className="btn-secondary flex items-center space-x-2 bg-red-50 text-red-700 hover:bg-red-100 text-xs sm:text-sm px-2 sm:px-3 py-2"
           >
-            <AlertTriangle className="h-4 w-4" />
-            <span className="hidden sm:inline">Reset Stock</span>
+            <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Reset</span>
           </button>
           <button
             onClick={async () => {
@@ -572,10 +572,10 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
                 console.error('Recalculate error:', error);
               }
             }}
-            className="btn-secondary flex items-center space-x-2"
+            className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm px-2 sm:px-3 py-2"
           >
-            <BarChart3 className="h-4 w-4" />
-            <span className="hidden sm:inline">Fix Stock</span>
+            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Fix</span>
           </button>
           <button
             onClick={async () => {
@@ -587,26 +587,26 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
                 console.error('Refresh error:', error);
               }
             }}
-            className="btn-secondary flex items-center space-x-2"
+            className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm px-2 sm:px-3 py-2"
           >
-            <Package className="h-4 w-4" />
-            <span className="hidden sm:inline">Refresh</span>
+            <Package className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Refresh</span>
           </button>
           <button
             onClick={() => setShowItemForm(true)}
-            className="btn-primary flex items-center space-x-2"
+            className="btn-primary flex items-center space-x-2 text-xs sm:text-sm px-3 sm:px-4 py-2"
           >
-            <Plus className="h-4 w-4" />
-            <span>Add New Item</span>
+            <Plus className="h-3 w-3 sm:h-4 sm:w-4" />
+            <span>Add Item</span>
           </button>
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
+      {/* Tabs - Mobile Responsive */}
+      <div className="flex overflow-x-auto bg-gray-100 p-1 rounded-lg" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <button
           onClick={() => setActiveTab('items')}
-          className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+          className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-md font-medium transition-colors text-sm whitespace-nowrap ${
             activeTab === 'items'
               ? 'bg-white text-primary-600 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
@@ -617,7 +617,7 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
         </button>
         <button
           onClick={() => setActiveTab('categories')}
-          className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+          className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-md font-medium transition-colors text-sm whitespace-nowrap ${
             activeTab === 'categories'
               ? 'bg-white text-primary-600 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
@@ -628,7 +628,7 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
         </button>
         <button
           onClick={() => setActiveTab('stock')}
-          className={`flex-1 px-4 py-2 rounded-md font-medium transition-colors ${
+          className={`flex-shrink-0 px-3 sm:px-4 py-2 rounded-md font-medium transition-colors text-sm whitespace-nowrap ${
             activeTab === 'stock'
               ? 'bg-white text-primary-600 shadow-sm'
               : 'text-gray-600 hover:text-gray-900'
@@ -941,129 +941,185 @@ export default function ItemManagement({ suppliers, onSuppliersChange }: ItemMan
                 </div>
               </div>
               
+              {/* Mobile-First Responsive Table */}
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Item Details
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Current Stock
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Purchased
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Sold
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Avg Cost
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Stock Value
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Total Profit
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                        Profit Margin
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                <div className="min-w-full">
+                  {/* Mobile Card View (Hidden on Desktop) */}
+                  <div className="block lg:hidden space-y-4 p-4">
                     {stockSummary.map((stock, index) => (
-                      <tr key={stock.itemId} className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-3 mb-1">
-                                <p className="text-sm font-semibold text-gray-900">{stock.itemName}</p>
-                                <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                                  stock.currentStock > 5 ? 'bg-green-100 text-green-700' :
-                                  stock.currentStock > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                                }`}>
-                                  {stock.currentStock > 0 ? 'In Stock' : 'Out of Stock'}
-                                </span>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-xs font-mono bg-gray-100 text-gray-700 px-2 py-1 rounded">
-                                  {stock.itemCode}
-                                </span>
-                                <span className="text-xs text-gray-500 capitalize">
-                                  {stock.category}
-                                </span>
+                      <div key={stock.itemId} className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900 text-sm">{stock.itemName}</h4>
+                            <p className="text-xs text-gray-500 font-mono">{stock.itemCode}</p>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            stock.currentStock > 5 ? 'bg-green-100 text-green-700' :
+                            stock.currentStock > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                          }`}>
+                            {stock.currentStock > 0 ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="text-center p-2 bg-blue-50 rounded">
+                            <div className="font-bold text-blue-600">{stock.currentStock}</div>
+                            <div className="text-xs text-gray-600">Current Stock</div>
+                          </div>
+                          <div className="text-center p-2 bg-green-50 rounded">
+                            <div className="font-bold text-green-600">{stock.totalPurchased}</div>
+                            <div className="text-xs text-gray-600">Purchased</div>
+                          </div>
+                          <div className="text-center p-2 bg-red-50 rounded">
+                            <div className="font-bold text-red-600">{stock.totalSold}</div>
+                            <div className="text-xs text-gray-600">Sold</div>
+                          </div>
+                          <div className="text-center p-2 bg-purple-50 rounded">
+                            <div className="font-bold text-purple-600">Rs {stock.totalCostValue.toFixed(0)}</div>
+                            <div className="text-xs text-gray-600">Stock Value</div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between text-sm">
+                          <div>
+                            <span className="text-gray-600">Avg Cost: </span>
+                            <span className="font-medium">Rs {stock.averageCostPrice.toFixed(0)}</span>
+                          </div>
+                          <div>
+                            <span className="text-gray-600">Profit: </span>
+                            <span className={`font-medium ${stock.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              Rs {stock.totalProfit.toFixed(0)} ({stock.profitMargin.toFixed(1)}%)
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Desktop Table View (Hidden on Mobile) */}
+                  <table className="hidden lg:table min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Item Details
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Current Stock
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Purchased
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Sold
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Avg Cost
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Stock Value
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Total Profit
+                        </th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                          Profit Margin
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {stockSummary.map((stock, index) => (
+                        <tr key={stock.itemId} className={`hover:bg-gray-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-25'}`}>
+                          <td className="px-6 py-4">
+                            <div className="flex items-center">
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-3 mb-1">
+                                  <p className="text-sm font-semibold text-gray-900">{stock.itemName}</p>
+                                  <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                                    stock.currentStock > 5 ? 'bg-green-100 text-green-700' :
+                                    stock.currentStock > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                                  }`}>
+                                    {stock.currentStock > 0 ? 'In Stock' : 'Out of Stock'}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-xs font-mono bg-gray-100 text-gray-700 px-2 py-1 rounded">
+                                    {stock.itemCode}
+                                  </span>
+                                  <span className="text-xs text-gray-500 capitalize">
+                                    {stock.category}
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className={`text-lg font-bold ${
-                              stock.currentStock > 5 ? 'text-green-600' :
-                              stock.currentStock > 0 ? 'text-yellow-600' : 'text-red-600'
-                            }`}>
-                              {stock.currentStock}
-                            </span>
-                            <span className="text-xs text-gray-500">units</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-semibold text-green-600">
-                              {stock.totalPurchased}
-                            </span>
-                            <span className="text-xs text-gray-500">total</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-semibold text-red-600">
-                              {stock.totalSold}
-                            </span>
-                            <span className="text-xs text-gray-500">total</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-semibold text-gray-900">
-                              Rs {stock.averageCostPrice.toFixed(0)}
-                            </span>
-                            <span className="text-xs text-gray-500">per unit</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className="text-sm font-bold text-purple-600">
-                              Rs {stock.totalCostValue.toFixed(0)}
-                            </span>
-                            <span className="text-xs text-gray-500">total value</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className={`text-sm font-bold ${
-                              stock.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              Rs {stock.totalProfit.toFixed(0)}
-                            </span>
-                            <span className="text-xs text-gray-500">total profit</span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex flex-col items-center">
-                            <span className={`text-sm font-bold ${
-                              stock.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'
-                            }`}>
-                              {stock.profitMargin.toFixed(1)}%
-                            </span>
-                            <span className="text-xs text-gray-500">margin</span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className={`text-lg font-bold ${
+                                stock.currentStock > 5 ? 'text-green-600' :
+                                stock.currentStock > 0 ? 'text-yellow-600' : 'text-red-600'
+                              }`}>
+                                {stock.currentStock}
+                              </span>
+                              <span className="text-xs text-gray-500">units</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className="text-sm font-semibold text-green-600">
+                                {stock.totalPurchased}
+                              </span>
+                              <span className="text-xs text-gray-500">total</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className="text-sm font-semibold text-red-600">
+                                {stock.totalSold}
+                              </span>
+                              <span className="text-xs text-gray-500">total</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className="text-sm font-semibold text-gray-900">
+                                Rs {stock.averageCostPrice.toFixed(0)}
+                              </span>
+                              <span className="text-xs text-gray-500">per unit</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className="text-sm font-bold text-purple-600">
+                                Rs {stock.totalCostValue.toFixed(0)}
+                              </span>
+                              <span className="text-xs text-gray-500">total value</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className={`text-sm font-bold ${
+                                stock.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                                Rs {stock.totalProfit.toFixed(0)}
+                              </span>
+                              <span className="text-xs text-gray-500">total profit</span>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-center">
+                            <div className="flex flex-col items-center">
+                              <span className={`text-sm font-bold ${
+                                stock.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'
+                              }`}>
+                                {stock.profitMargin.toFixed(1)}%
+                              </span>
+                              <span className="text-xs text-gray-500">margin</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
               
               {/* Enhanced Summary Cards */}

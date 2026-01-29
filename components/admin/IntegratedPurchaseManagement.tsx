@@ -432,12 +432,12 @@ export default function IntegratedPurchaseManagement({
 
   return (
     <div className="space-y-6">
-      {/* Header with Tabs */}
-      <div className="flex items-center justify-between">
-        <div className="flex space-x-1">
+      {/* Header with Tabs - Mobile Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <button
             onClick={() => setActiveTab('purchases')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-colors text-sm whitespace-nowrap ${
               activeTab === 'purchases'
                 ? 'bg-primary-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -447,7 +447,7 @@ export default function IntegratedPurchaseManagement({
           </button>
           <button
             onClick={() => setActiveTab('suppliers')}
-            className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+            className={`flex-shrink-0 px-4 py-2 rounded-lg font-medium transition-colors text-sm whitespace-nowrap ml-2 ${
               activeTab === 'suppliers'
                 ? 'bg-primary-600 text-white'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -461,7 +461,7 @@ export default function IntegratedPurchaseManagement({
           {activeTab === 'purchases' && (
             <button 
               onClick={() => setShowPurchaseForm(true)}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 text-sm px-3 py-2"
             >
               <Plus className="h-4 w-4" />
               <span>Add Purchase</span>
@@ -470,7 +470,7 @@ export default function IntegratedPurchaseManagement({
           {activeTab === 'suppliers' && (
             <button 
               onClick={() => setShowSupplierForm(true)}
-              className="btn-primary flex items-center space-x-2"
+              className="btn-primary flex items-center space-x-2 text-sm px-3 py-2"
             >
               <Plus className="h-4 w-4" />
               <span>Add Supplier</span>
@@ -500,9 +500,78 @@ export default function IntegratedPurchaseManagement({
             </div>
           </div>
 
-          {/* Purchases List */}
+          {/* Purchases List - Mobile Responsive */}
           <div className="bg-white rounded-lg shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
+            {/* Mobile Card View (Hidden on Desktop) */}
+            <div className="block lg:hidden">
+              {filteredPurchases.length === 0 ? (
+                <div className="px-6 py-12 text-center text-gray-500">
+                  <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p className="text-lg font-medium">No purchases yet</p>
+                  <p className="text-sm">Start by adding your first purchase from a supplier</p>
+                </div>
+              ) : (
+                <div className="space-y-4 p-4">
+                  {filteredPurchases.map((purchase) => (
+                    <div key={purchase.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-900">#{purchase.id.slice(-6)}</div>
+                          <div className="text-sm text-gray-500">{purchase.purchaseDate.toLocaleDateString()}</div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => editPurchase(purchase)}
+                            className="p-2 text-primary-600 hover:text-primary-900 rounded-lg hover:bg-primary-50"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => deletePurchase(purchase.id)}
+                            className="p-2 text-red-600 hover:text-red-900 rounded-lg hover:bg-red-50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{purchase.supplierName}</div>
+                          <div className="text-sm text-gray-500">{purchase.supplierPhone}</div>
+                        </div>
+                        
+                        <div>
+                          <div className="text-sm text-gray-900 mb-1">{purchase.items.length} item(s)</div>
+                          <div className="text-sm text-gray-500 space-y-1">
+                            {purchase.items.slice(0, 2).map((item, index) => (
+                              <div key={index} className="flex items-center">
+                                {(item as any).itemId && (
+                                  <Link className="h-3 w-3 text-green-600 mr-1" />
+                                )}
+                                <span>{item.itemName}</span>
+                              </div>
+                            ))}
+                            {purchase.items.length > 2 && (
+                              <span className="text-gray-400">+{purchase.items.length - 2} more</span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="pt-2 border-t border-gray-100">
+                          <div className="text-lg font-semibold text-gray-900">
+                            {formatPrice(purchase.totalAmount)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Desktop Table View (Hidden on Mobile) */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>

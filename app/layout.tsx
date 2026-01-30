@@ -66,7 +66,7 @@ export const metadata: Metadata = {
   
   // Enhanced verification
   verification: {
-    google: 'glasgow-turbo-house-verification',
+    google: 'wj6W8HNpXfqZtz2JLJXJxkHZkUEUI4XtxqiOJ5RBlFY',
     yandex: 'glasgow-turbo-house-yandex',
     yahoo: 'glasgow-turbo-house-yahoo',
   },

@@ -4,7 +4,7 @@ import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import ClientWrapper from '@/components/ClientWrapper';
 import ContactForm from '@/components/ContactForm';
-import { Phone, Mail, MapPin, Clock } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react';
 import { CONTACT_INFO } from '@/lib/constants';
 
 export const metadata: Metadata = {
@@ -107,9 +107,30 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
+
+            {/* Quick Actions - Below Business Hours */}
+            <div className="mt-8 space-y-4">
+              <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a 
+                  href="/custom-order" 
+                  className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+                >
+                  <MessageSquare className="h-5 w-5 text-primary-600" />
+                  <span className="font-medium text-gray-900">Custom Order</span>
+                </a>
+                <a 
+                  href={`tel:${CONTACT_INFO.phones[0]}`}
+                  className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
+                >
+                  <Phone className="h-5 w-5 text-primary-600" />
+                  <span className="font-medium text-gray-900">Call Now</span>
+                </a>
+              </div>
+            </div>
           </div>
 
-          {/* Contact Form - Now a Client Component */}
+          {/* Contact Form */}
           <div>
             <ContactForm />
           </div>

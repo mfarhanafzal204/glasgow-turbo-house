@@ -106,153 +106,127 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-      {/* Quick Actions */}
-      <div className="lg:order-2">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <a 
-              href="/custom-order" 
-              className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200"
-            >
-              <MessageSquare className="h-5 w-5 text-primary-600" />
-              <span className="font-medium text-gray-900">Custom Order</span>
-            </a>
-            <button 
-              onClick={handleCallNow}
-              className="flex items-center space-x-3 bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 cursor-pointer"
-            >
-              <Phone className="h-5 w-5 text-primary-600" />
-              <span className="font-medium text-gray-900">Call Now</span>
-            </button>
+    <div className="bg-white rounded-lg shadow-sm p-8">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
+              First Name *
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              name="firstName"
+              required
+              value={formData.firstName}
+              onChange={handleInputChange}
+              className="input-field"
+              placeholder="Enter your first name"
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              name="lastName"
+              required
+              value={formData.lastName}
+              onChange={handleInputChange}
+              className="input-field"
+              placeholder="Enter your last name"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Contact Form */}
-      <div className="bg-white rounded-lg shadow-sm p-8 lg:order-1">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-2">
-                First Name *
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                required
-                value={formData.firstName}
-                onChange={handleInputChange}
-                className="input-field"
-                placeholder="Enter your first name"
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-2">
-                Last Name *
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                required
-                value={formData.lastName}
-                onChange={handleInputChange}
-                className="input-field"
-                placeholder="Enter your last name"
-              />
-            </div>
-          </div>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            Email Address *
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            value={formData.email}
+            onChange={handleInputChange}
+            className="input-field"
+            placeholder="your@email.com"
+          />
+        </div>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address *
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              value={formData.email}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="your@email.com"
-            />
-          </div>
+        <div>
+          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone"
+            required
+            value={formData.phone}
+            onChange={handleInputChange}
+            className="input-field"
+            placeholder="03XX XXXXXXX"
+          />
+        </div>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-              Phone Number *
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              required
-              value={formData.phone}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="03XX XXXXXXX"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-              Subject *
-            </label>
-            <select
-              id="subject"
-              name="subject"
-              required
-              value={formData.subject}
-              onChange={handleInputChange}
-              className="input-field"
-            >
-              <option value="">Select a subject</option>
-              <option value="general">General Inquiry</option>
-              <option value="parts">Turbo Parts</option>
-              <option value="repair">Repair Services</option>
-              <option value="custom">Custom Order</option>
-              <option value="support">Technical Support</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-              Message *
-            </label>
-            <textarea
-              id="message"
-              name="message"
-              required
-              rows={5}
-              value={formData.message}
-              onChange={handleInputChange}
-              className="input-field"
-              placeholder="Please describe your inquiry in detail..."
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        <div>
+          <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+            Subject *
+          </label>
+          <select
+            id="subject"
+            name="subject"
+            required
+            value={formData.subject}
+            onChange={handleInputChange}
+            className="input-field"
           >
-            {isSubmitting ? 'Sending...' : 'Send Message'}
-          </button>
-        </form>
-
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-sm text-blue-800">
-            <strong>Note:</strong> For urgent matters, please call us directly. 
-            We typically respond to messages within 24 hours during business days.
-          </p>
+            <option value="">Select a subject</option>
+            <option value="general">General Inquiry</option>
+            <option value="parts">Turbo Parts</option>
+            <option value="repair">Repair Services</option>
+            <option value="custom">Custom Order</option>
+            <option value="support">Technical Support</option>
+            <option value="other">Other</option>
+          </select>
         </div>
+
+        <div>
+          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+            Message *
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows={5}
+            value={formData.message}
+            onChange={handleInputChange}
+            className="input-field"
+            placeholder="Please describe your inquiry in detail..."
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isSubmitting ? 'Sending...' : 'Send Message'}
+        </button>
+      </form>
+
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> For urgent matters, please call us directly. 
+          We typically respond to messages within 24 hours during business days.
+        </p>
       </div>
 
       <Toaster position="top-right" />

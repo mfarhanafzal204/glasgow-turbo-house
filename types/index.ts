@@ -280,3 +280,42 @@ export interface MonthlyFinancialReport {
   topExpenseCategory: string;
   cashFlowTrend: 'positive' | 'negative' | 'stable';
 }
+
+// NEW: Billing System Types
+export interface BillItem {
+  id: string;
+  productId?: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  discount: number;
+  subtotal: number;
+}
+
+export interface Bill {
+  id: string;
+  billNumber: string;
+  customerName: string;
+  customerPhone: string;
+  customerAddress?: string;
+  items: BillItem[];
+  subtotal: number;
+  totalDiscount: number;
+  grandTotal: number;
+  paymentMethod?: 'cash' | 'bank' | 'jazzcash' | 'card' | 'other';
+  paymentStatus: 'paid' | 'pending' | 'partial';
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// NEW: Barcode System Types
+export interface ProductBarcode {
+  id: string;
+  productId: string;
+  productName: string;
+  barcode: string;
+  barcodeType: 'CODE128' | 'EAN13' | 'UPC' | 'CODE39';
+  createdAt: Date;
+  updatedAt: Date;
+}

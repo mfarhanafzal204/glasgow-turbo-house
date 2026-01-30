@@ -13,6 +13,8 @@ import IntegratedSalesManagement from './IntegratedSalesManagement';
 import InventoryDashboard from './InventoryDashboard';
 import FinancialManagement from './FinancialManagement';
 import ItemManagement from './ItemManagement';
+import BillingManagement from './BillingManagement';
+import BarcodeManagement from './BarcodeManagement';
 import { 
   Package, 
   ShoppingCart, 
@@ -24,7 +26,9 @@ import {
   BarChart3,
   DollarSign,
   MessageSquare,
-  Tag
+  Tag,
+  Receipt,
+  QrCode
 } from 'lucide-react';
 
 interface ContactMessage {
@@ -209,9 +213,11 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
     { id: 'purchases', label: 'Purchases', icon: Truck },
     { id: 'sales', label: 'Sales', icon: ShoppingBag },
     { id: 'orders', label: 'Orders', icon: ShoppingCart },
-    { id: 'custom-orders', label: 'Custom Orders', icon: FileText },
+    { id: 'custom-orders', label: 'Custom', icon: FileText },
     { id: 'messages', label: 'Messages', icon: MessageSquare },
     { id: 'financial', label: 'Financial', icon: DollarSign },
+    { id: 'billing', label: 'Billing', icon: Receipt },
+    { id: 'barcodes', label: 'Barcodes', icon: QrCode },
   ];
 
   return (
@@ -242,44 +248,134 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
       </header>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6 lg:py-8">
-        {/* Mobile-First Navigation Tabs - Fixed Overflow */}
+        {/* Enhanced Navigation Tabs - Multi-breakpoint Responsive */}
         <div className="border-b border-gray-200 mb-4 sm:mb-6 lg:mb-8">
-          <nav className="-mb-px flex overflow-x-auto scrollbar-hide pb-1" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const hasNotification = 
-                (tab.id === 'orders' && pendingOrders > 0) ||
-                (tab.id === 'custom-orders' && pendingCustomOrders > 0) ||
-                (tab.id === 'messages' && newMessages > 0);
-              
-              const notificationCount = 
-                tab.id === 'orders' ? pendingOrders :
-                tab.id === 'custom-orders' ? pendingCustomOrders :
-                tab.id === 'messages' ? newMessages : 0;
+          <nav className="-mb-px">
+            {/* Large Desktop: Full tabs with wrapping */}
+            <div className="hidden xl:block">
+              <div className="flex flex-wrap gap-1">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const hasNotification = 
+                    (tab.id === 'orders' && pendingOrders > 0) ||
+                    (tab.id === 'custom-orders' && pendingCustomOrders > 0) ||
+                    (tab.id === 'messages' && newMessages > 0);
+                  
+                  const notificationCount = 
+                    tab.id === 'orders' ? pendingOrders :
+                    tab.id === 'custom-orders' ? pendingCustomOrders :
+                    tab.id === 'messages' ? newMessages : 0;
 
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-2 py-2 px-3 sm:px-4 lg:px-5 border-b-2 font-medium text-xs sm:text-sm whitespace-nowrap flex-shrink-0 min-w-fit ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600 bg-blue-50'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                  } transition-all duration-200 rounded-t-lg`}
-                  style={{ minWidth: 'fit-content' }}
-                >
-                  <Icon className="h-4 w-4 sm:h-4 sm:w-4 flex-shrink-0" />
-                  <span className="text-xs sm:text-sm whitespace-nowrap">
-                    {tab.label}
-                  </span>
-                  {hasNotification && (
-                    <span className="absolute -top-1 -right-1 sm:static sm:ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center font-medium animate-pulse">
-                      {notificationCount}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`relative flex items-center space-x-2 py-3 px-4 border-b-2 font-medium text-sm whitespace-nowrap ${
+                        activeTab === tab.id
+                          ? 'border-blue-500 text-blue-600 bg-blue-50'
+                          : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                      } transition-all duration-200 rounded-t-lg`}
+                    >
+                      <Icon className="h-4 w-4 flex-shrink-0" />
+                      <span className="text-sm">
+                        {tab.label}
+                      </span>
+                      {hasNotification && (
+                        <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center font-medium animate-pulse">
+                          {notificationCount}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Medium Desktop & Tablet: Horizontal scroll */}
+            <div className="hidden sm:block xl:hidden">
+              <div className="flex overflow-x-auto scrollbar-hide pb-1">
+                <div className="flex space-x-1 min-w-max px-2">
+                  {tabs.map((tab) => {
+                    const Icon = tab.icon;
+                    const hasNotification = 
+                      (tab.id === 'orders' && pendingOrders > 0) ||
+                      (tab.id === 'custom-orders' && pendingCustomOrders > 0) ||
+                      (tab.id === 'messages' && newMessages > 0);
+                    
+                    const notificationCount = 
+                      tab.id === 'orders' ? pendingOrders :
+                      tab.id === 'custom-orders' ? pendingCustomOrders :
+                      tab.id === 'messages' ? newMessages : 0;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`relative flex items-center space-x-2 py-2 px-3 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
+                          activeTab === tab.id
+                            ? 'border-blue-500 text-blue-600 bg-blue-50'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                        } transition-all duration-200 rounded-t-lg`}
+                        style={{ minWidth: 'fit-content' }}
+                      >
+                        <Icon className="h-4 w-4 flex-shrink-0" />
+                        <span className="text-sm whitespace-nowrap">
+                          {tab.label}
+                        </span>
+                        {hasNotification && (
+                          <span className="ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-5 h-5 flex items-center justify-center font-medium animate-pulse">
+                            {notificationCount}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile: Compact horizontal scroll */}
+            <div className="block sm:hidden">
+              <div className="flex overflow-x-auto scrollbar-hide pb-1">
+                <div className="flex space-x-1 min-w-max px-1">
+                  {tabs.map((tab) => {
+                    const Icon = tab.icon;
+                    const hasNotification = 
+                      (tab.id === 'orders' && pendingOrders > 0) ||
+                      (tab.id === 'custom-orders' && pendingCustomOrders > 0) ||
+                      (tab.id === 'messages' && newMessages > 0);
+                    
+                    const notificationCount = 
+                      tab.id === 'orders' ? pendingOrders :
+                      tab.id === 'custom-orders' ? pendingCustomOrders :
+                      tab.id === 'messages' ? newMessages : 0;
+
+                    return (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`relative flex flex-col items-center justify-center space-y-1 py-2 px-2 border-b-2 font-medium text-xs whitespace-nowrap flex-shrink-0 ${
+                          activeTab === tab.id
+                            ? 'border-blue-500 text-blue-600 bg-blue-50'
+                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                        } transition-all duration-200 rounded-t-lg`}
+                        style={{ minWidth: '65px' }}
+                      >
+                        <Icon className="h-4 w-4 flex-shrink-0" />
+                        <span className="text-xs leading-tight text-center">
+                          {tab.label}
+                        </span>
+                        {hasNotification && (
+                          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-4 h-4 flex items-center justify-center font-medium animate-pulse">
+                            {notificationCount}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </nav>
         </div>
 
@@ -454,6 +550,14 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             transactions={financialTransactions}
             onTransactionsChange={fetchData}
           />
+        )}
+
+        {activeTab === 'billing' && (
+          <BillingManagement products={products} />
+        )}
+
+        {activeTab === 'barcodes' && (
+          <BarcodeManagement products={products} />
         )}
       </div>
     </div>

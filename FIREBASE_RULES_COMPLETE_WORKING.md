@@ -56,6 +56,16 @@ service cloud.firestore {
       allow read, write: if request.auth != null;
     }
     
+    // NEW: Bills collection for billing system
+    match /bills/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
+    // NEW: Barcodes collection for barcode system
+    match /barcodes/{document} {
+      allow read, write: if request.auth != null;
+    }
+    
     // Test collection for connectivity
     match /test/{document} {
       allow read, write: if true;

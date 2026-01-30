@@ -69,9 +69,9 @@ export default function SearchResults({
         </div>
       )}
 
-      {/* Products Grid - 2 columns on mobile like Amazon */}
+      {/* Products Grid - Fully responsive with equal height cards */}
       {products.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-6 auto-rows-fr">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

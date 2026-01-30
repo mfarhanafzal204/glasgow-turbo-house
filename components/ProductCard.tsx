@@ -51,7 +51,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <div className="product-card group bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+    <div className="product-card group bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 h-full flex flex-col">
       <div className="relative">
         {/* Discount Badge */}
         {discount > 0 && (
@@ -134,39 +134,39 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
       </div>
 
-      <div className="p-3 sm:p-5">
+      <div className="p-3 sm:p-5 flex flex-col flex-grow">
         {/* Product Name - Clickable */}
         <Link href={`/product/${productSlug}`}>
-          <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors text-sm sm:text-lg cursor-pointer">
+          <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 hover:text-primary-600 transition-colors text-sm sm:text-lg cursor-pointer min-h-[2.5rem] sm:min-h-[3.5rem]">
             {product.name}
           </h3>
         </Link>
 
-        {/* Compatible Vehicles - Hide on very small screens */}
-        <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 bg-gray-50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg hidden xs:block">
+        {/* Compatible Vehicles - Better mobile visibility */}
+        <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3 bg-gray-50 px-2 sm:px-3 py-1 sm:py-2 rounded-lg block">
           <span className="font-medium">Compatible:</span> {product.compatibleVehicles.slice(0, 1).join(', ')}
           {product.compatibleVehicles.length > 1 && ` +${product.compatibleVehicles.length - 1} more`}
         </p>
 
         {/* Description - Hide on mobile */}
-        <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed hidden sm:block">
+        <p className="text-sm text-gray-500 mb-4 line-clamp-2 leading-relaxed hidden sm:block flex-grow">
           {product.description}
         </p>
 
-        {/* Pricing */}
-        <div className="mb-3 sm:mb-4">
-          <div className="flex items-center space-x-2 mb-1">
-            <span className="text-lg sm:text-xl font-bold text-primary-600">
+        {/* Pricing - Better mobile layout */}
+        <div className="mb-3 sm:mb-4 mt-auto">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 mb-1">
+            <span className="text-lg sm:text-xl font-bold text-primary-600 mb-1 sm:mb-0">
               {formatPrice(product.discountedPrice)}
             </span>
             {product.originalPrice > product.discountedPrice && (
-              <span className="text-xs sm:text-sm text-gray-500 line-through">
+              <span className="text-sm sm:text-sm text-gray-500 line-through block">
                 {formatPrice(product.originalPrice)}
               </span>
             )}
           </div>
           {discount > 0 && (
-            <div className="flex items-center">
+            <div className="flex items-center mt-1">
               <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">
                 -{discount}% OFF
               </span>
@@ -178,7 +178,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <button
           onClick={handleAddToCart}
           disabled={!product.inStock}
-          className="w-full btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400 py-2 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-300"
+          className="w-full btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed disabled:hover:bg-gray-400 py-2 sm:py-3 font-semibold text-xs sm:text-sm rounded-lg transition-all duration-300 mt-auto"
         >
           {product.inStock ? 'Add to Cart' : 'Out of Stock'}
         </button>

@@ -154,8 +154,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </p>
 
         {/* Pricing */}
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2">
+        <div className="mb-3 sm:mb-4">
+          <div className="flex items-center space-x-2 mb-1">
             <span className="text-lg sm:text-xl font-bold text-primary-600">
               {formatPrice(product.discountedPrice)}
             </span>
@@ -166,9 +166,11 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
           {discount > 0 && (
-            <span className="text-xs bg-red-100 text-red-800 px-1 sm:px-2 py-1 rounded-full font-medium">
-              -{discount}%
-            </span>
+            <div className="flex items-center">
+              <span className="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full font-medium">
+                -{discount}% OFF
+              </span>
+            </div>
           )}
         </div>
 

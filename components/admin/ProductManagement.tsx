@@ -14,7 +14,7 @@ import { Plus, Edit, Trash2, X, Package } from 'lucide-react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import AdminSearchBar from './AdminSearchBar';
 import toast from 'react-hot-toast';
-import { uploadImageToImgBB, validateImageFile, compressImage } from '@/lib/imageUpload';
+import { uploadImageToFirebaseStorage, validateImageFile, compressImage, getSafeImageUrl } from '@/lib/imageUpload';
 import { searchProducts } from '@/lib/search';
 
 interface ProductManagementProps {
@@ -97,15 +97,18 @@ export default function ProductManagement({ products, onProductsChange }: Produc
     setUploadingImages({ turbo: false, car: false });
   };
 
-  // Handle file upload
+  // Handle file upload with proper error handling
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'turbo' | 'car') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file
+    console.log('🔄 Starting file upload:', file.name, file.type, `${(file.size / 1024 / 1024).toFixed(2)}MB`);
+
+    // Validate file first
     const validation = validateImageFile(file);
     if (!validation.valid) {
       toast.error(validation.error || 'Invalid file');
+      console.error('❌ File validation failed:', validation.error);
       return;
     }
 
@@ -114,18 +117,14 @@ export default function ProductManagement({ products, onProductsChange }: Produc
     try {
       // Show file size info
       const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-      toast.success(`Processing ${fileSizeMB}MB image...`);
+      toast.loading(`Processing ${fileSizeMB}MB image...`, { id: `upload-${type}` });
       
-      // Compress image for better performance
-      const compressedFile = await compressImage(file);
-      const compressedSizeMB = (compressedFile.size / (1024 * 1024)).toFixed(2);
+      console.log('✅ File validation passed, starting upload...');
       
-      if (compressedFile.size < file.size) {
-        toast.success(`Compressed from ${fileSizeMB}MB to ${compressedSizeMB}MB`);
-      }
+      // Upload image (uses base64 encoding - works immediately)
+      const imageUrl = await uploadImageToFirebaseStorage(file, 'products');
       
-      // Upload image
-      const imageUrl = await uploadImageToImgBB(compressedFile);
+      console.log('✅ Upload completed successfully');
       
       if (type === 'turbo') {
         setFormData(prev => ({ ...prev, turboImageUrl: imageUrl }));
@@ -133,10 +132,25 @@ export default function ProductManagement({ products, onProductsChange }: Produc
         setFormData(prev => ({ ...prev, carImageUrl: imageUrl }));
       }
       
-      toast.success('Image uploaded successfully!');
+      toast.dismiss(`upload-${type}`);
+      toast.success('✅ Image uploaded successfully! Ready to save product.');
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload image. Please try again.');
+      console.error('❌ Upload error:', error);
+      toast.dismiss(`upload-${type}`);
+      
+      // More specific error messages
+      let errorMessage = 'Failed to upload image. Please try again.';
+      if (error instanceof Error) {
+        if (error.message.includes('Invalid file')) {
+          errorMessage = 'File type not supported. Please use JPG, PNG, WebP, or GIF.';
+        } else if (error.message.includes('size')) {
+          errorMessage = 'File too large. Please use an image smaller than 50MB.';
+        } else if (error.message.includes('process')) {
+          errorMessage = 'Could not process image. Please try a different image file.';
+        }
+      }
+      
+      toast.error(errorMessage);
     } finally {
       setUploadingImages(prev => ({ ...prev, [type]: false }));
     }
@@ -245,11 +259,7 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                   <div className="flex-shrink-0">
                     <img
                       className="h-12 w-12 rounded-lg object-cover"
-                      src={product.turboImage?.startsWith('/placeholder') 
-                        ? 'https://picsum.photos/40/40?random=1' 
-                        : product.turboImage?.includes('google.com/imgres')
-                        ? 'https://picsum.photos/40/40?random=2'
-                        : product.turboImage || 'https://picsum.photos/40/40?random=3'}
+                      src={getSafeImageUrl(product.turboImage, 'turbo')}
                       alt={product.name}
                     />
                   </div>
@@ -327,11 +337,7 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                       <div className="flex-shrink-0 h-10 w-10">
                         <img
                           className="h-10 w-10 rounded-lg object-cover"
-                          src={product.turboImage?.startsWith('/placeholder') 
-                            ? 'https://picsum.photos/40/40?random=1' 
-                            : product.turboImage?.includes('google.com/imgres')
-                            ? 'https://picsum.photos/40/40?random=2'
-                            : product.turboImage || 'https://picsum.photos/40/40?random=3'}
+                          src={getSafeImageUrl(product.turboImage, 'turbo')}
                           alt={product.name}
                         />
                       </div>
@@ -512,15 +518,19 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                     <div className="space-y-2">
                       <input
                         type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(e, 'turbo')}
+                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp"
+                        onChange={(e) => {
+                          handleFileUpload(e, 'turbo');
+                          // Reset input to allow same file upload again
+                          e.target.value = '';
+                        }}
                         className="input-field w-full text-sm"
                         disabled={uploadingImages.turbo}
                       />
                       {uploadingImages.turbo && (
                         <div className="flex items-center space-x-2 text-sm text-blue-600">
                           <LoadingSpinner size="sm" />
-                          <span>Uploading...</span>
+                          <span>Processing image...</span>
                         </div>
                       )}
                     </div>
@@ -540,9 +550,11 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                     <p className="text-xs text-gray-500 mt-1">
                       Upload from your device (laptop/phone/tablet) or paste image URL.
                       <br />
-                      <strong>Supported:</strong> JPG, PNG, WebP (up to 10MB - will be compressed automatically)
+                      <strong>Supported:</strong> JPG, JPEG, PNG, WebP, GIF, BMP (up to 50MB - will be compressed automatically)
                       <br />
                       <strong>Best quality:</strong> High-resolution images from your device camera or gallery
+                      <br />
+                      <strong>Tip:</strong> If you get "types not supported", try saving your image as JPG or PNG first
                     </p>
                   </div>
 
@@ -566,15 +578,19 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                     <div className="space-y-2">
                       <input
                         type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(e, 'car')}
+                        accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp"
+                        onChange={(e) => {
+                          handleFileUpload(e, 'car');
+                          // Reset input to allow same file upload again
+                          e.target.value = '';
+                        }}
                         className="input-field w-full text-sm"
                         disabled={uploadingImages.car}
                       />
                       {uploadingImages.car && (
                         <div className="flex items-center space-x-2 text-sm text-blue-600">
                           <LoadingSpinner size="sm" />
-                          <span>Uploading...</span>
+                          <span>Processing image...</span>
                         </div>
                       )}
                     </div>
@@ -594,9 +610,11 @@ export default function ProductManagement({ products, onProductsChange }: Produc
                     <p className="text-xs text-gray-500 mt-1">
                       Upload from your device (laptop/phone/tablet) or paste image URL.
                       <br />
-                      <strong>Supported:</strong> JPG, PNG, WebP (up to 10MB - will be compressed automatically)
+                      <strong>Supported:</strong> JPG, JPEG, PNG, WebP, GIF, BMP (up to 50MB - will be compressed automatically)
                       <br />
                       <strong>Best quality:</strong> High-resolution images from your device camera or gallery
+                      <br />
+                      <strong>Tip:</strong> If you get "types not supported", try saving your image as JPG or PNG first
                     </p>
                   </div>
                 </div>

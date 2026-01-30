@@ -19,13 +19,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Company Info */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6 logo-container">
+            <div className="flex items-center space-x-3 mb-6">
               <div className="relative w-12 h-12 flex-shrink-0">
                 <img
                   src="/logo.jpg"
                   alt="Glasgow Turbo House Logo"
                   className="w-full h-full object-contain rounded-lg"
-                  style={{ display: 'block' }}
                   onError={(e) => {
                     console.error('Footer logo failed to load, showing fallback');
                     const img = e.target as HTMLImageElement;
@@ -36,12 +35,12 @@ export default function Footer() {
                     }
                   }}
                   onLoad={() => {
-                    console.log('Footer logo loaded successfully from /logo.jpg');
+                    console.log('✅ Footer logo loaded successfully');
                   }}
                 />
                 {/* Professional Fallback GT logo */}
-                <div className="absolute inset-0 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-sm rounded-lg shadow-lg" style={{ display: 'none' }}>
-                  <span className="text-shadow">GT</span>
+                <div className="absolute inset-0 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-sm rounded-lg shadow-lg hidden">
+                  GT
                 </div>
               </div>
               <div>

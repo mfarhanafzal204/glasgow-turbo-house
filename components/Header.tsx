@@ -3,47 +3,104 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ShoppingCart, Search, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/hooks/useCart';
 import { COMPANY_INFO } from '@/lib/constants';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
   const { getTotalItems } = useCart();
-  const router = useRouter();
+  
+  // Safe router usage with error handling
+  let router;
+  try {
+    router = useRouter();
+  } catch (error) {
+    console.warn('Router not available during SSR');
+    router = null;
+  }
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-      setIsMenuOpen(false);
+    if (searchQuery.trim() && router && isMounted) {
+      try {
+        router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+        setSearchQuery('');
+        setIsMenuOpen(false);
+      } catch (error) {
+        console.error('Navigation error:', error);
+        // Fallback to window.location
+        window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      }
     }
   };
+
+  // Don't render interactive elements until mounted
+  if (!isMounted) {
+    return (
+      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-20">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 bg-white rounded-lg border border-gray-200 p-1">
+                <img
+                  src="/logo.jpg"
+                  alt="Glasgow Turbo House Logo"
+                  className="w-full h-full object-contain rounded"
+                />
+              </div>
+              <div className="hidden sm:block">
+                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">GDS - {COMPANY_INFO.name}</h1>
+                <p className="text-xs lg:text-sm text-blue-600 font-medium">Top Turbo Dealers Multan</p>
+              </div>
+            </Link>
+            
+            {/* Loading placeholder */}
+            <div className="flex items-center space-x-4">
+              <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
+              <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          {/* Logo */}
+          {/* Logo with Fallback */}
           <Link href="/" className="flex items-center space-x-3">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 bg-white rounded-lg border border-gray-200 p-1">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 flex-shrink-0 bg-white rounded-lg border border-gray-200 p-1 relative">
               <img
                 src="/logo.jpg"
                 alt="Glasgow Turbo House Logo"
                 className="w-full h-full object-contain rounded"
-                onLoad={(e) => {
-                  console.log('✅ Header logo loaded successfully from /logo.jpg');
-                  const img = e.target as HTMLImageElement;
-                  console.log('Image dimensions:', img.naturalWidth, 'x', img.naturalHeight);
+                onLoad={() => {
+                  console.log('✅ Header logo loaded successfully');
                 }}
                 onError={(e) => {
-                  console.error('❌ Header logo failed to load from /logo.jpg');
+                  console.error('❌ Header logo failed to load, showing fallback');
                   const img = e.target as HTMLImageElement;
-                  console.log('Failed image src:', img.src);
+                  img.style.display = 'none';
+                  const fallback = img.nextElementSibling as HTMLElement;
+                  if (fallback) {
+                    fallback.style.display = 'flex';
+                  }
                 }}
               />
+              {/* Professional Fallback */}
+              <div className="absolute inset-0 items-center justify-center bg-gradient-to-br from-blue-600 to-blue-700 text-white font-bold text-lg rounded hidden">
+                GT
+              </div>
             </div>
             <div className="hidden sm:block">
               <h1 className="text-xl lg:text-2xl font-bold text-gray-900">GDS - {COMPANY_INFO.name}</h1>

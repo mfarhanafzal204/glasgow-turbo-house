@@ -7,6 +7,7 @@ import { formatPrice, calculateDiscount, generateSlug } from '@/lib/utils';
 import { useCart } from '@/hooks/useCart';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import { getSafeImageUrl } from '@/lib/imageUpload';
 
 interface ProductCardProps {
   product: Product;
@@ -20,8 +21,8 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   // Create image array with both turbo and car images
   const images = [
-    product.turboImage || 'https://picsum.photos/400/400?random=1',
-    product.compatibleCarImage || 'https://picsum.photos/400/400?random=2'
+    getSafeImageUrl(product.turboImage, 'turbo'),
+    getSafeImageUrl(product.compatibleCarImage, 'car')
   ].filter(Boolean);
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -49,23 +50,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     setCurrentImageIndex(index);
   };
 
-  // Get safe image URL with fallback
-  const getSafeImageUrl = (url: string) => {
-    if (!url) {
-      return 'https://picsum.photos/400/400?random=1';
-    }
-    
-    if (url.startsWith('/placeholder')) {
-      return 'https://picsum.photos/400/400?random=2';
-    }
-    
-    if (url.includes('google.com/imgres') || url.includes('googleusercontent.com')) {
-      return 'https://picsum.photos/400/400?random=3';
-    }
-    
-    return url;
-  };
-
   return (
     <div className="product-card group bg-white rounded-lg sm:rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
       <div className="relative">
@@ -87,7 +71,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="aspect-square relative overflow-hidden bg-gray-100 cursor-pointer">
           <Link href={`/product/${productSlug}`}>
             <img
-              src={getSafeImageUrl(images[currentImageIndex])}
+              src={images[currentImageIndex]}
               alt={currentImageIndex === 0 ? `${product.name} turbo` : `Compatible car for ${product.name}`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               loading="lazy"

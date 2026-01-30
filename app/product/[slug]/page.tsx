@@ -15,6 +15,7 @@ import { formatPrice, calculateDiscount } from '@/lib/utils';
 import { ShoppingCart, ArrowLeft, Truck, Shield, Award, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { getSafeImageUrl } from '@/lib/imageUpload';
 
 export default function ProductDetailPage() {
   const params = useParams();
@@ -87,29 +88,6 @@ export default function ProductDetailPage() {
     }
   };
 
-  // Function to get safe image URL
-  const getSafeImageUrl = (url: string, type: 'turbo' | 'car') => {
-    if (!url) {
-      return type === 'turbo' 
-        ? 'https://picsum.photos/600/600?random=1'
-        : 'https://picsum.photos/600/400?random=2';
-    }
-    
-    if (url.startsWith('/placeholder')) {
-      return type === 'turbo' 
-        ? 'https://picsum.photos/600/600?random=3'
-        : 'https://picsum.photos/600/400?random=4';
-    }
-    
-    if (url.includes('google.com/imgres') || url.includes('googleusercontent.com')) {
-      return type === 'turbo' 
-        ? 'https://picsum.photos/600/600?random=5'
-        : 'https://picsum.photos/600/400?random=6';
-    }
-    
-    return url;
-  };
-
   if (loading) {
     return (
       <ClientWrapper>
@@ -173,7 +151,7 @@ export default function ProductDetailPage() {
                 <>
                   <div className="aspect-square relative overflow-hidden rounded-lg bg-gray-100 group">
                     <img
-                      src={getSafeImageUrl(images[currentImageIndex]?.url || '', images[currentImageIndex]?.type || 'turbo')}
+                      src={getSafeImageUrl(images[currentImageIndex]?.url, images[currentImageIndex]?.type || 'turbo')}
                       alt={`${product.name} - ${images[currentImageIndex]?.label || 'Product'}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />

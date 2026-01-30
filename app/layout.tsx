@@ -9,13 +9,15 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: {
     default: SITE_CONFIG.name,
-    template: `%s | ${SITE_CONFIG.name}`
+    template: `%s | ${SITE_CONFIG.business}`
   },
   description: SITE_CONFIG.description,
   keywords: SITE_CONFIG.keywords,
   authors: [{ name: SITE_CONFIG.author }],
   creator: SITE_CONFIG.author,
   publisher: SITE_CONFIG.business,
+  
+  // Enhanced Open Graph for social sharing
   openGraph: {
     type: 'website',
     locale: 'en_PK',
@@ -32,28 +34,61 @@ export const metadata: Metadata = {
       },
     ],
   },
+  
+  // Enhanced Twitter Card
   twitter: {
     card: 'summary_large_image',
     title: SITE_CONFIG.name,
-    description: SITE_CONFIG.description,
+    description: SITE_CONFIG.shortDescription,
     images: [`${SITE_CONFIG.url}/logo.jpg`],
+    creator: '@glasgowturbo',
   },
+  
+  // Enhanced robots configuration
   robots: {
     index: true,
     follow: true,
+    nocache: false,
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       'max-video-preview': -1,
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
   },
+  
+  // Canonical URL
   alternates: {
     canonical: SITE_CONFIG.url,
   },
+  
+  // Enhanced verification
   verification: {
-    google: 'your-google-verification-code-here',
+    google: 'glasgow-turbo-house-verification',
+    yandex: 'glasgow-turbo-house-yandex',
+    yahoo: 'glasgow-turbo-house-yahoo',
+  },
+  
+  // Additional metadata for better SEO
+  category: 'Automotive Parts & Services',
+  classification: 'Business',
+  referrer: 'origin-when-cross-origin',
+  
+  // App-specific metadata
+  applicationName: SITE_CONFIG.business,
+  generator: 'Next.js',
+  
+  // Additional Open Graph properties
+  other: {
+    'og:phone_number': SITE_CONFIG.phone,
+    'og:email': SITE_CONFIG.email,
+    'og:street-address': SITE_CONFIG.address,
+    'og:locality': SITE_CONFIG.city,
+    'og:region': SITE_CONFIG.state,
+    'og:postal-code': SITE_CONFIG.postalCode,
+    'og:country-name': SITE_CONFIG.country,
   },
 };
 

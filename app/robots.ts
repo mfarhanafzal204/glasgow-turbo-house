@@ -6,15 +6,20 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/'],
+        disallow: ['/admin/', '/api/', '/_next/', '/private/'],
       },
       {
         userAgent: 'Googlebot',
         allow: '/',
-        disallow: ['/admin/', '/api/'],
+        disallow: ['/admin/', '/api/', '/_next/', '/private/'],
+      },
+      {
+        userAgent: 'Bingbot',
+        allow: '/',
+        disallow: ['/admin/', '/api/', '/_next/', '/private/'],
       }
     ],
-    sitemap: 'https://glasgowturbo.com/sitemap.xml',
-    host: 'https://glasgowturbo.com',
+    sitemap: 'https://glassgow-turbo-house.vercel.app/sitemap.xml',
+    host: 'https://glassgow-turbo-house.vercel.app',
   };
 }
